@@ -35,7 +35,7 @@ typst compile dot_grid_template.typ output.pdf
         {"from": [0, 0], "to": [2, 0]},
         {"from": [0, 0], "to": [1, 2]},
         {"from": [2, 0], "to": [1, 2]}
-],
+      ],
       "style": {                 // style指定（省略可）
         "line_color": "black",   // 線の色（省略可、デフォルト"black"）
         "line_width": 1,         // 線の太さ（mm単位、省略可、デフォルト1mm）
