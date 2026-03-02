@@ -1,0 +1,45 @@
+{
+  "problems": [
+    {
+      "grid_size": 3,
+      "lines": [
+        {"from": [0, 0], "to": [2, 0]},
+        {"from": [0, 0], "to": [1, 2]},
+        {"from": [2, 0], "to": [1, 2]}
+      ],
+      "style": {
+        "line_color": "black",
+        "line_width": 1,
+        "dot_radius": 2
+      }
+    },
+    {
+      "grid_size": 3,
+      "lines": [
+        {"from": [1, 0], "to": [0, 1]},
+        {"from": [1, 0], "to": [2, 1]},
+        {"from": [0, 1], "to": [2, 2]},
+        {"from": [2, 1], "to": [0, 2]}
+      ],
+      "style": {
+        "line_color": "black",
+        "line_width": 1,
+        "dot_radius": 2
+      }
+    },
+    {
+      "grid_size": 3,
+      "lines": [
+        {"from": [1, 0], "to": [2, 0]},
+        {"from": [1, 0], "to": [0, 2]},
+        {"from": [0, 2], "to": [1, 2]},
+        {"from": [2, 0], "to": [1, 2]}
+      ],
+      "style": {
+        "line_color": "black",
+        "line_width": 1,
+        "dot_radius": 2
+      }
+    }
+  ]
+}
