@@ -1,6 +1,6 @@
 // ===== レイアウト設定 =====
 #let square-size = 9.2cm       // 正方形1辺の長さ(3×3適性)
-// #let square-size = 7.0cm       // 正方形1辺の長さ(4×4適性)
+// #let square-size = 7.0cm   // 正方形1辺の長さ(4×4適性)
 #let border-pad = square-size / 6   // 辺とドットの間隔（比率1）
 #let cell-size = square-size / 3    // ドット間の間隔（比率2）
 
@@ -13,7 +13,7 @@
 #set page(
   paper: "a4",
   flipped: true,
-  margin: (x: 1cm, top: 1.5cm, bottom: 0.5cm)
+  margin: (x: 1cm, top: 1.5cm, bottom: 0.5cm),
 )
 
 // ===== ドットを中心座標で描画 =====
@@ -21,7 +21,7 @@
   place(
     dx: cx - radius,
     dy: cy - radius,
-    circle(radius: radius, fill: black)
+    circle(radius: radius, fill: black),
   )
 }
 
@@ -33,13 +33,20 @@
     line(
       start: (0pt, 0pt),
       end: (cx2 - cx1, cy2 - cy1),
-      stroke: stroke(paint: color, thickness: width)
-    )
+      stroke: stroke(paint: color, thickness: width),
+    ),
   )
 }
 
 // ===== グリッド描画（枠線あり） =====
-#let draw-grid(size, with-lines: false, lines-data: (), line-color: black, line-width: 1.5pt, dot-radius: default-dot-radius) = {
+#let draw-grid(
+  size,
+  with-lines: false,
+  lines-data: (),
+  line-color: black,
+  line-width: 1.5pt,
+  dot-radius: default-dot-radius,
+) = {
   let inner = (size - 1) * cell-size
   let total = inner + border-pad * 2
 
@@ -72,49 +79,39 @@
           draw-dot-at(cx, cy, dot-radius)
         }
       }
-    }
+    },
   )
+}
+
+// ===== 色名・hex文字列をTypst colorに変換 =====
+#let parse-color(color-str) = {
+  if color-str.starts-with("#") {
+    rgb(color-str)
+  } else if color-str == "black" { black } else if color-str == "white" { white } else if color-str == "red" {
+    red
+  } else if color-str == "blue" { blue } else if color-str == "green" { green } else { rgb(color-str) }
 }
 
 // ===== 1問分（お手本＋回答欄）を縦に並べる =====
 #let problem-cell(problem) = {
-  // styleセクションが存在するか確認
   let has-style = "style" in problem
-  
-  // 色の処理：文字列なら色名またはhexとして解釈、省略時はデフォルト
+
   let lc = if has-style and "line_color" in problem.style {
-    let color-str = problem.style.line_color
-    if color-str.starts-with("#") {
-      rgb(color-str)
-    } else if color-str == "black" {
-      black
-    } else if color-str == "white" {
-      white
-    } else if color-str == "red" {
-      red
-    } else if color-str == "blue" {
-      blue
-    } else if color-str == "green" {
-      green
-    } else {
-      rgb(color-str)  // hex形式として試行
-    }
+    parse-color(problem.style.line_color)
   } else {
     default-line-color
   }
-  
+
   let lw = if has-style and "line_width" in problem.style { problem.style.line_width * 1mm } else { default-line-width }
   let dr = if has-style and "dot_radius" in problem.style { problem.style.dot_radius * 1mm } else { default-dot-radius }
   let sz = problem.grid_size
 
-  align(center,
-    stack(
-      dir: ttb,
-      spacing: 0cm,
-      draw-grid(sz, with-lines: true, lines-data: problem.lines, line-color: lc, line-width: lw, dot-radius: dr),
-      draw-grid(sz, dot-radius: dr),
-    )
-  )
+  align(center, stack(
+    dir: ttb,
+    spacing: 0cm,
+    draw-grid(sz, with-lines: true, lines-data: problem.lines, line-color: lc, line-width: lw, dot-radius: dr),
+    draw-grid(sz, dot-radius: dr),
+  ))
 }
 
 // ===== 3問を横に並べる =====
@@ -128,5 +125,8 @@
 }
 
 // ===== メイン =====
-#let data = json("sample_problems.json")
+// --input json-file=xxx.json でJSONファイルを指定（templates/からの相対パス）
+// 省略時は ../problems/sample_problems.json を使用
+#let json-path = sys.inputs.at("json-file", default: "../problems/sample_problems.json")
+#let data = json(json-path)
 #problem-row(data.problems)

@@ -1,45 +1,98 @@
 # 点図形問題生成システム
 
-## ファイル構成
+## フォルダ構成
 
-1. **dot_grid_template.typ** - Typstテンプレートファイル
-2. **sample_problems.json** - サンプル問題データ
-
-## 使用方法
-
-### Typstのインストール
-
-```bash
-# macOS (Homebrew)
-brew install typst
-
-# Windows / Linux
-# https://github.com/typst/typst/releases から最新版をダウンロード
+```
+dot-grid-problem/
+├── README.md
+├── generators/
+│   └── generate_problems.py     # Python問題生成プログラム
+├── problems/
+│   ├── sample_problems.json     # サンプル問題データ
+│   └── problem_config_example.json  # 問題設定ファイル例
+├── scripts/
+│   ├── generate.sh              # 問題生成スクリプト
+│   ├── compile_pdf.sh           # PDF生成スクリプト
+│   └── workflow.sh              # ワンステップ実行スクリプト
+└── templates/
+    └── dot_grid_template.typ    # Typstテンプレート
 ```
 
-### PDF生成
+## クイックスタート
 
 ```bash
-typst compile dot_grid_template.typ output.pdf
+# 実行権限を付与
+chmod +x scripts/*.sh
+
+# ランダムな問題を3つ生成してPDF作成
+./scripts/workflow.sh
+
+# カスタマイズ例
+./scripts/workflow.sh -n 5 -t mixed -o my_worksheet.pdf
+./scripts/workflow.sh -g 4 -t square -o 4x4_problems.pdf
+./scripts/workflow.sh -c problems/problem_config_example.json -o custom.pdf
 ```
 
-## JSON形式の説明
+## 詳細な使用方法
+
+### ワンステップ実行 (workflow.sh)
+
+```bash
+./scripts/workflow.sh [オプション]
+
+オプション:
+    -n, --count NUM         問題数 (デフォルト: 3)
+    -g, --grid-size SIZE    グリッドサイズ (デフォルト: 3)
+    -t, --template TYPE     図形テンプレート (後述)
+    -c, --config FILE       設定ファイルから生成
+    -o, --output FILE       出力PDFファイル名 (デフォルト: output.pdf)
+```
+
+### 問題生成のみ (generate.sh)
+
+```bash
+./scripts/generate.sh -o problems/my_problems.json -n 5 -t mixed
+```
+
+### PDFコンパイルのみ (compile_pdf.sh)
+
+```bash
+./scripts/compile_pdf.sh problems/my_problems.json output.pdf
+```
+
+### Python直接実行
+
+```bash
+python3 generators/generate_problems.py --output problems/test.json --count 5 --template mixed
+python3 generators/generate_problems.py --config problems/problem_config_example.json
+```
+
+## 図形テンプレート
+
+| テンプレート名 | 内容 |
+|---|---|
+| `random`   | ランダムな線分 |
+| `square`   | 正方形 |
+| `diamond`  | 菱形（3×3専用） |
+| `cross`    | 十字 |
+| `x`        | X字（対角線2本） |
+| `triangle` | 三角形 |
+| `mixed`    | 上記をローテーション |
+
+## JSON形式
 
 ```json
 {
   "problems": [
     {
-      "grid_size": 3,           // グリッドサイズ（3×3）
-      "lines": [                // 線分のリスト
-        // 始点 [x, y], 終点 [x, y] の配列
-        {"from": [0, 0], "to": [2, 0]},
-        {"from": [0, 0], "to": [1, 2]},
-        {"from": [2, 0], "to": [1, 2]}
+      "grid_size": 3,
+      "lines": [
+        {"from": [0, 0], "to": [2, 2]}
       ],
-      "style": {                 // style指定（省略可）
-        "line_color": "black",   // 線の色（省略可、デフォルト"black"）
-        "line_width": 1,         // 線の太さ（mm単位、省略可、デフォルト1mm）
-        "dot_radius": 2          // ドットの半径（mm単位、省略可、デフォルト2mm）
+      "style": {
+        "line_color": "black",   // 色名 or "#RRGGBB"（省略可）
+        "line_width": 1,         // mm単位（省略可）
+        "dot_radius": 2          // mm単位（省略可）
       }
     }
   ]
@@ -48,118 +101,34 @@ typst compile dot_grid_template.typ output.pdf
 
 ## 座標系
 
-- 左上を原点(0, 0)とする
-- 横方向(x)が右に増加
-- 縦方向(y)が下に増加
-- 3×3グリッドの場合、座標は0〜2の範囲
+- 左上を原点 `(0, 0)` とする
+- x が右方向、y が下方向に増加
+- 3×3グリッドの場合、座標は `0〜2` の範囲
 
-## レイアウト設計
+## 必要な環境
 
-### 正方形のサイズ計算
-
-`dot_grid_template.typ` の冒頭で正方形1辺の長さを指定：
-
-```typst
-#let square-size = 9.2cm  // この値を変更するだけ
-```
-
-正方形内のドット配置は自動計算されます：
-- 辺とドットの間隔：ドット間隔 = 1:2（固定比率）
-- `border-pad = square-size / 6`
-- `cell-size = square-size / 3`
-
-### デフォルトスタイル
-
-テンプレートファイルで設定：
-
-```typst
-#let default-line-width = 1mm    // 線の幅
-#let default-dot-radius = 2mm    // ドットの半径
-#let default-line-color = black  // 線の色
-```
+- **Python 3.6+** — 問題生成に必要
+- **Typst 0.11+** — PDF生成に必要
+  - macOS: `brew install typst`
+  - その他: https://github.com/typst/typst
 
 ## カスタマイズ
 
-### 線の色を変更する例
+### レイアウト調整
 
-色名（black, white, red, blue, green）または16進数カラーコード（#RRGGBB）が使用できます：
+`templates/dot_grid_template.typ` の冒頭で変更：
 
-```json
-"style": {
-  "line_color": "#0000ff",  // 青色（hex形式）
-  "line_width": 1.5,        // 1.5mm
-  "dot_radius": 2           // 2mm
-}
+```typst
+#let square-size = 9.2cm   // 3×3向け
+// #let square-size = 7.0cm   // 4×4向け
 ```
 
-または
+### デフォルトスタイル変更
 
-```json
-"style": {
-  "line_color": "red",      // 赤色（色名）
-  "line_width": 1,
-  "dot_radius": 2
-}
+```typst
+#let default-line-width = 1mm
+#let default-dot-radius = 2mm
+#let default-line-color = black
 ```
-
-### ドットサイズを変更する例
-
-```json
-"style": {
-  "line_color": "black",
-  "line_width": 1,
-  "dot_radius": 3           // 大きめのドット（3mm）
-}
-```
-
-### スタイルの省略
-
-`style` の各項目は省略可能です。省略した場合はデフォルト値が使用されます：
-
-```json
-"style": {
-  "line_color": "black"
-  // line_width と dot_radius はデフォルト値を使用
-}
-```
-
-または、`style`セクション全体を省略することも可能です：
-
-```json
-{
-  "grid_size": 3,
-  "lines": [
-    {"from": [0, 0], "to": [2, 2]}
-  ]
-  // style省略 → すべてデフォルト値を使用
-}
-```
-
-### 4×4グリッドへの拡張
-
-JSONの`grid_size`を4に変更するだけで対応可能です：
-
-```json
-{
-  "grid_size": 4,
-  "lines": [
-    {"from": [0, 0], "to": [3, 3]}
-  ],
-  "style": {
-    "line_color": "black",
-    "line_width": 1,
-    "dot_radius": 2
-  }
-}
-```
-
-## トラブルシューティング
-
-- エラーが出る場合：JSONの構文が正しいか確認してください
-- レイアウトの調整：`dot_grid_template.typ`の`square-size`を変更してください
-- 正方形がページに収まらない：`square-size`を小さくするか、ページマージンを調整してください
-
 ## 今後の改善予定
-- 正方形の重なり防止
-- 問題自動生成
-- bashスクリプト作成
+- 生成される問題の精度向上
