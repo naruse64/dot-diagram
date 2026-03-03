@@ -9,7 +9,7 @@ GENERATE="$SCRIPT_DIR/generate.sh"
 COMPILE="$SCRIPT_DIR/compile_pdf.sh"
 
 TEMP_JSON="/tmp/dot_grid_problems_$$.json"
-OUTPUT_PDF="output.pdf"
+OUTPUT_PDF="output/output.pdf"
 
 # ヘルプ表示
 show_help() {
@@ -24,13 +24,13 @@ show_help() {
     -g, --grid-size SIZE    グリッドサイズ (デフォルト: 3)
     -t, --template TYPE     図形テンプレート (random/square/diamond/cross/x/triangle/mixed)
     -c, --config FILE       設定ファイルから生成
-    -o, --output FILE       出力PDFファイル名 (デフォルト: output.pdf)
+    -o, --output FILE       出力PDFファイル名 (デフォルト: output/output.pdf)
     -h, --help              このヘルプを表示
 
 例:
-    ./workflow.sh -n 5 -t mixed -o worksheet.pdf
-    ./workflow.sh -c problems/problem_config_example.json -o my_worksheet.pdf
-    ./workflow.sh -g 4 -t square -o 4x4_problems.pdf
+    ./workflow.sh -n 5 -t mixed -o output/worksheet.pdf
+    ./workflow.sh -c problems/problem_config_example.json -o output/my_worksheet.pdf
+    ./workflow.sh -g 4 -t square -o output/4x4_problems.pdf
 EOF
 }
 
