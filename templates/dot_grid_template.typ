@@ -114,7 +114,7 @@
   ))
 }
 
-// ===== 3問を横に並べる =====
+// ===== 3問を横に並べる（1ページ分） =====
 #let problem-row(problems) = {
   grid(
     columns: (1fr, 1fr, 1fr),
@@ -124,9 +124,30 @@
   )
 }
 
+// ===== 配列を n 個ずつのチャンクに分割 =====
+#let chunks(arr, n) = {
+  let result = ()
+  let i = 0
+  while i < arr.len() {
+    let chunk = arr.slice(i, calc.min(i + n, arr.len()))
+    result = result + (chunk,)
+    i = i + n
+  }
+  result
+}
+
+// ===== 全問題を3問ずつページに分けて描画 =====
+#let render-all(problems) = {
+  let pages = chunks(problems, 3)
+  for (i, page-problems) in pages.enumerate() {
+    if i > 0 { pagebreak() }
+    problem-row(page-problems)
+  }
+}
+
 // ===== メイン =====
 // --input json-file=xxx.json でJSONファイルを指定（templates/からの相対パス）
 // 省略時は ../problems/sample_problems.json を使用
 #let json-path = sys.inputs.at("json-file", default: "../problems/sample_problems.json")
 #let data = json(json-path)
-#problem-row(data.problems)
+#render-all(data.problems)
