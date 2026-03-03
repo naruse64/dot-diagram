@@ -1,31 +1,10 @@
 {
   "problems": [
-    {
-      "grid_size": 3,
-      "shape": "square",
-      "style": {
-        "line_color": "black",
-        "line_width": 1,
-        "dot_radius": 2
-      }
-    },
-    {
-      "grid_size": 3,
-      "shape": "diamond",
-      "style": {
-        "line_color": "red",
-        "line_width": 1,
-        "dot_radius": 2
-      }
-    },
-    {
-      "grid_size": 3,
-      "shape": "cross",
-      "style": {
-        "line_color": "#0000ff",
-        "line_width": 1.5,
-        "dot_radius": 2
-      }
-    }
+    {"grid_size": 3, "shape": "house",         "style": {"line_color": "black", "line_width": 1, "dot_radius": 2}},
+    {"grid_size": 3, "shape": "diamond",        "style": {"line_color": "black", "line_width": 1, "dot_radius": 2}},
+    {"grid_size": 3, "shape": "right_triangle", "style": {"line_color": "black", "line_width": 1, "dot_radius": 2}},
+    {"grid_size": 3, "shape": "pentagon",       "style": {"line_color": "black", "line_width": 1, "dot_radius": 2}},
+    {"grid_size": 3, "shape": "hourglass",      "style": {"line_color": "black", "line_width": 1, "dot_radius": 2}},
+    {"grid_size": 3, "shape": "l_shape_closed", "style": {"line_color": "black", "line_width": 1, "dot_radius": 2}}
   ]
 }
